@@ -59,10 +59,6 @@
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#breve-mencion-de-la-metodologia-rag" class="nav-link">Breve mención de la metodología RAG</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
               </ul>
             </li>
         </ul>
@@ -73,58 +69,21 @@
 <h1 id="documentacion-de-mecatutor">Documentacion de Mecatutor</h1>
 <h2 id="seccion-1-resumen-del-proyecto-y-justificacion">Sección 1: Resumen del Proyecto y Justificación</h2>
 <h3 id="que-es-mecatutor">Qué es MecaTutor</h3>
-<p>MecaTutor nace de la necesidad de tener una herramienta que sirva como <strong>asistente educativo por IA para estudiantes de mecatrónica e ingenieria automotriz</strong>. La idea principal es simple en concepto, pero muy poderosa en práctica. Se desea centralizar y estructurar la información de manuales, libros, artículos y apuntes en un solo lugar, y permitir que un modelo de lenguaje la utilice para responder preguntas de manera contextualizada, precisa y adaptada al nivel de un estudiante, con el fin de que el estudiante logre entender todos los conceptos de una manera mas dinamica.</p>
-<p>Este proyecto tiene como objetivo principal <strong>hacer que la información existente sea más accesible y comprensible por medio de un modelo LLM</strong>, ayudando a estudiantes a encontrar respuestas rápidas y correctas a sus dudas técnicas, sin tener que navegar por decenas de PDFs o libros extensos. </p>
-<p>En su pura esencia, MecaTutor es un puente entre el conocimiento técnico acumulado en los documentos y la capacidad de un modelo de lenguaje de procesar y explicar ese conocimiento de manera organizada y didáctica.</p>
-<hr />
-<h3 id="que-problema-resuelve">Qué problema resuelve?</h3>
-<p>Durante las primeras semanas del proyecto, quedó bastante claro que muchos estudiantes enfrentan la dispersión de la información. Los manuales son extensos, los libros contienen muchas páginas y los artículos especializados a veces usan lenguaje técnico que resulta inaccesible para principiantes. Esto genera pérdida de tiempo, confusión y dificultades para consolidar conceptos fundamentales.</p>
-<p>MecaTutor aborda este problema proporcionando:</p>
-<ul>
-<li><strong>Acceso centralizado</strong>: todos los documentos relevantes se encuentran en un solo lugar, organizados y listos para consulta.  </li>
-<li><strong>Búsqueda basada en significado</strong>: en lugar de buscar solo palabras clave, el sistema recupera información relevante según lo que realmente significa la pregunta del estudiante.  </li>
-<li><strong>Aprendizaje guiado</strong>: la información no se entrega de manera fría; se presenta con contexto y claridad, ayudando a que el estudiante entienda, no solo copie.</li>
-</ul>
-<p>En pocas palabras, MecaTutor convierte un corpus complejo y voluminoso en una herramienta de aprendizaje <strong>eficiente, clara y muy práctica</strong>.</p>
-<hr />
-<h3 id="por-que-se-eligio-esta-aproximacion-en-lugar-de-un-rag-de-terceros">Por qué se eligio esta aproximación en lugar de un RAG de terceros</h3>
-<p>Al iniciar el proyecto, existían varias alternativas: se pudo haber hecho una recopilación manual de resúmenes, un buscador simple de PDFs, o incluso usar modelos comerciales externos vía API. Sin embargo, estas opciones presentaban limitaciones claras:</p>
-<ol>
-<li><strong>Manual/estática:</strong> toma mucho tiempo y es difícil de mantener.  </li>
-<li><strong>Búsqueda básica por palabras clave:</strong> no entiende el significado y puede devolver respuestas irrelevantes.  </li>
-<li><strong>Servicios externos:</strong> implican costos y dependencia de terceros, además de limitar el control sobre la información.</li>
-</ol>
-<p>La aproximación basada en un <strong>RAG (Retrieval-Augmented Generation)</strong> permite mantener el control total del contenido, aprovechar la capacidad de comprensión de un modelo de lenguaje como Llama y, al mismo tiempo, mantener la información <strong>propia, segura y reproducible</strong>.<br />
-Se trata de una metodología que no solo permite responder preguntas, sino hacerlo <strong>de manera educativa y confiable</strong>, respetando el contexto técnico del área automotriz.</p>
-<hr />
+<p>MecaTutor es un proyecto que busca crear una herramienta inteligente para apoyar a estudiantes de mecatrónica y áreas afines en el aprendizaje de temas relacionados con motores, sistemas automotrices y fundamentos de ingeniería mecánica. La idea central de MecaTutor es aprovechar la capacidad de los modelos de lenguaje actuales para responder preguntas de manera clara y rápida, pero con un enfoque mucho más específico y claro.</p>
+<p>El propósito de MecaTutor no es reemplazar la enseñanza tradicional ni competir con las plataformas existentes, sino ofrecer una ayuda práctica y concreta. La herramienta permitirá hacer preguntas sobre conceptos automotrices o mecatrónicos y obtener respuestas basadas directamente en material académico confiable. Esto incluye manuales, apuntes, libros y artículos técnicos. Todo este material se encuentra en PDF y va a servir como una base para construir el conocimiento del LLM.</p>
+<p>En otras palabras, MecaTutor va a servir como un asistente de estudio diseñado para responder preguntas técnicas de forma rápida, precisa y sin rodeos, apoyándose únicamente en los PDFs.</p>
+<h3 id="que-problema-resuelve-mecatutor">Qué problema resuelve MecaTutor</h3>
+<p>En muchas carreras de ingeniería, los estudiantes siempre han tenido una barrera entre la teoría y la práctica. La información existe, pero siempre ha sido muy dispersa entre decenas de libros, manuales y artículos. A veces puede tomar muchisimo tiempo para los estudiantes en conseguir algo ya indexado o resumido. </p>
+<p>Los LLMs comerciales como Gemini o ChatGPT pueden dar respuestas interesantes, pero no siempre son exactas o contextualizadas. En campos técnicos como la mecatrónica, una imprecisión en una unidad o un concepto puede generar confusiones serias.</p>
+<p>MecaTutor intenta resolver esa brecha. Su meta es ofrecer un sistema que, en lugar de inventar respuestas, las recupere directamente desde documentos técnicos reales. El modelo no entiende el contexto de las cosas por sí mismo, sino que intenta buscar la información correcta en su base documental antes de responder. Un RAG es literalmente eso y es lo que MecaTutor replica. </p>
+<h3 id="por-que-se-eligio-esta-aproximacion">Por qué se eligio esta aproximación</h3>
+<p>El proyecto surge de una idea inicial muy poderosa y es entrenar un LLM desde cero para temas automotrices. Sin embargo, los recursos y la complejidad técnica que MecaTutor implica, se decide al final tomar una ruta más realista. Un RAG (Retrieval-Augmented Generation) es una metodología que combina la búsqueda de información y la generación de lenguaje natural. Para lograr esto, se utiliza un modelo ya existente y se le da acceso a una base de conocimiento externa.</p>
+<p>En otras palabras, se aprovecha el conocimiento general del modelo y se le agrega información especializada que está en los PDFs técnicos. </p>
+<p>Este enfoque tiene sentido dentro de las limitaciones de MecaTutor. Construir un RAG se puede lograr de forma local y optimizada, usando recursos razonables y un pipeline bien estructurado.</p>
+<p>Para MecaTutor, el modelo funcional que se puede emplear es Llama 3.2 con 30B de parametros. </p>
 <h3 id="objetivos-y-alcances">Objetivos y alcances</h3>
-<p><strong>Objetivo inicial:</strong><br />
-Crear un prototipo funcional de MecaTutor que permita a un estudiante hacer preguntas técnicas sobre motores, sistemas automotrices y mecatrónica en general, y obtener respuestas fundamentadas en documentos previamente recopilados.</p>
-<p><strong>Objetivos secundarios de; proyecto:</strong>  </p>
-<ul>
-<li>Diseñar una <strong>estructura organizada de datos</strong>, capaz de almacenar y recuperar información de manera eficiente.  </li>
-<li>Generar una <strong>documentación sólida</strong> que explique la lógica del proyecto, los conceptos de RAG y la interacción entre los documentos y el modelo.  </li>
-<li>Permitir que futuros desarrolladores puedan <strong>extender el sistema</strong>, agregar más documentos o actualizar el corpus sin reentrenar el modelo completo.  </li>
-<li>Justificar de manera clara y comprensible todas las decisiones técnicas, mostrando evidencia del trabajo realizado durante las semanas de desarrollo.</li>
-</ul>
-<p><strong>Alcance inicial de MecaTutor:</strong>  </p>
-<ul>
-<li>Prototipo funcional en <strong>CLI</strong>, capaz de recibir preguntas y entregar respuestas basadas en el corpus principal de documentos.  </li>
-<li>Uso limitado a <strong>documentos esenciales (core)</strong> para asegurar rapidez y manejabilidad durante la fase de desarrollo.  </li>
-<li>Documentación completa en Markdown, desplegada vía MkDocs en GitHub Pages.</li>
-</ul>
-<hr />
-<h2 id="breve-mencion-de-la-metodologia-rag">Breve mención de la metodología RAG</h2>
-<p>RAG (Retrieval-Augmented Generation) es la columna vertebral de MecaTutor. La idea es bastante simple: <strong>el modelo de lenguaje no sabe todo por sí mismo</strong>, pero puede generar respuestas precisas si se le da información relevante.  </p>
-<ol>
-<li>Se extrae el texto de los PDFs.  </li>
-<li>Se divide en fragmentos manejables llamados <em>chunks</em>.  </li>
-<li>Cada chunk se representa como un vector que captura su significado (embedding).  </li>
-<li>Al recibir una pregunta, se buscan los chunks más relevantes y se construye un prompt con ellos para el modelo.  </li>
-<li>El modelo genera la respuesta combinando su conocimiento general con la información específica del corpus.</li>
-</ol>
-<p>De esta manera, <strong>MecaTutor esta asegurando que cada respuesta esté fundamentada en documentación real</strong>, minimizando errores y mejorando la comprensión del estudiante.</p>
-<hr /></div>
+<p>El objetivo principal de MecaTutor es construir un desarrollo de un prototipo funcional capaz de responder preguntas sobre temas automotrices y de mecatrónica. El LLM debe ser capaz de extraer la información necesaria, procesarla y ofrecer respuestas claras, sin depender de conexión a modelos comerciales externos.</p>
+<p>El alcance del proyecto se limita a una interfaz de línea de comandos (CLI) en su primera fase. En su segunda fase, se puede integrar una interfaz grafica (GUI).</p></div>
             </div>
         </div>
 
@@ -206,5 +165,5 @@ Crear un prototipo funcional de MecaTutor que permita a un estudiante hacer preg
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-10-20 22:02:01.737894+00:00
+Build Date UTC : 2025-10-21 23:01:40.101313+00:00
 -->
