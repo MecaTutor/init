@@ -55,7 +55,11 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#documentacion-de-mecatutor" class="nav-link">Documentacion de Mecatutor</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#seccion-1-resumen-del-proyecto-y-justificacion" class="nav-link">Sección 1: Resumen del Proyecto y Justificación</a>
+            <li class="nav-item" data-bs-level="2"><a href="#seccion-1-sinopsis-general-de-mecatutor" class="nav-link">Sección 1: Sinopsis general de Mecatutor</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#seccion-2-detalles-del-flujo-de-trabajo" class="nav-link">Sección 2: Detalles del flujo de trabajo</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -67,7 +71,7 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="documentacion-de-mecatutor">Documentacion de Mecatutor</h1>
-<h2 id="seccion-1-resumen-del-proyecto-y-justificacion">Sección 1: Resumen del Proyecto y Justificación</h2>
+<h2 id="seccion-1-sinopsis-general-de-mecatutor">Sección 1: Sinopsis general de Mecatutor</h2>
 <h3 id="que-es-mecatutor">Qué es MecaTutor</h3>
 <p>MecaTutor es un proyecto que busca crear una herramienta inteligente para apoyar a estudiantes de mecatrónica y áreas afines en el aprendizaje de temas relacionados con motores, sistemas automotrices y fundamentos de ingeniería mecánica. La idea central de MecaTutor es aprovechar la capacidad de los modelos de lenguaje actuales para responder preguntas de manera clara y rápida, pero con un enfoque mucho más específico y claro.</p>
 <p>El propósito de MecaTutor no es reemplazar la enseñanza tradicional ni competir con las plataformas existentes, sino ofrecer una ayuda práctica y concreta. La herramienta permitirá hacer preguntas sobre conceptos automotrices o mecatrónicos y obtener respuestas basadas directamente en material académico confiable. Esto incluye manuales, apuntes, libros y artículos técnicos. Todo este material se encuentra en PDF y va a servir como una base para construir el conocimiento del LLM.</p>
@@ -83,7 +87,25 @@
 <p>Para MecaTutor, el modelo funcional que se puede emplear es Llama 3.2 con 30B de parametros. </p>
 <h3 id="objetivos-y-alcances">Objetivos y alcances</h3>
 <p>El objetivo principal de MecaTutor es construir un desarrollo de un prototipo funcional capaz de responder preguntas sobre temas automotrices y de mecatrónica. El LLM debe ser capaz de extraer la información necesaria, procesarla y ofrecer respuestas claras, sin depender de conexión a modelos comerciales externos.</p>
-<p>El alcance del proyecto se limita a una interfaz de línea de comandos (CLI) en su primera fase. En su segunda fase, se puede integrar una interfaz grafica (GUI).</p></div>
+<p>El alcance del proyecto se limita a una interfaz de línea de comandos (CLI) en su primera fase. En su segunda fase, se puede integrar una interfaz grafica (GUI).</p>
+<hr />
+<h2 id="seccion-2-detalles-del-flujo-de-trabajo">Sección 2:  Detalles del flujo de trabajo</h2>
+<h3 id="mapeo-general-de-mecatutor">Mapeo general de MecaTutor</h3>
+<p>Esta sección va a explicar en su mayor detalle el funcionamiento del pipeline de MecaTutor desde un conjunto de PDFs hasta que un usuario recibe una respuesta. Esta sección comprende cada componente y explica que decisiones se toman y que salidas va a producir. Esta pensada para que cualquier ingeniero que se centre en el proyecto pueda entender el flujo completo y replicarlo si es necesario con las herramientas deseadas</p>
+<p>El flujo se resume en las siguientes etapas:
+- Paso 1: Ingesta 
+- Paso 2: Extracto de información y limpieza
+- Paso 3: Segmentado de datos (por chunks)
+- Paso 4: Indexado por vectores
+- Paso 5: Consultas (RAG) 
+- Paso 6: Post-procesado de datos </p>
+<p>Se necesita mencionar como es que cada una de estas etapas trabajan;</p>
+<h3 id="ingesta">Ingesta</h3>
+<h3 id="extracto-de-informacion-y-limpieza">Extracto de información y limpieza</h3>
+<h3 id="segmentado-de-datos">Segmentado de datos</h3>
+<h3 id="indexado-por-vectores">Indexado por vectores</h3>
+<h3 id="consultas-rag">Consultas (RAG)</h3>
+<h3 id="post-procesado-de-datos">Post-procesado de datos</h3></div>
             </div>
         </div>
 
@@ -165,5 +187,5 @@
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-10-21 23:01:40.101313+00:00
+Build Date UTC : 2025-10-22 00:08:36.436633+00:00
 -->
