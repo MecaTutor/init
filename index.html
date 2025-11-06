@@ -63,6 +63,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#seccion-3-detalles-tecnicos-del-trabajo-del-sistema" class="nav-link">Sección 3: Detalles tecnicos del trabajo del sistema</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -133,7 +137,60 @@
 <h3 id="consideraciones-tecnicas-y-limitaciones">Consideraciones técnicas y limitaciones</h3>
 <p>El proyecto está diseñado para ejecutarse en un entorno local usando CPU, ya que las máquinas disponibles no cuentan con GPU de alto rendimiento. Esto implica que los procesos de generación de embeddings y búsqueda pueden tardar más, pero sigue siendo viable gracias a la optimización de los modelos y al manejo cuidadoso de los recursos.</p>
 <p>Los 58 PDFs iniciales representan un conjunto amplio, pero manejable. Aun así, el sistema deberá procesarlos de forma incremental, para evitar sobrecargas.</p>
-<p>El sistema está pensado para ser transparente. Cada paso del pipeline se documentará de manera clara, y las decisiones técnicas se registrarán junto con las justificaciones de diseño. Esto permitirá que cualquier persona que lea la documentación entienda no solo cómo funciona MecaTutor, sino por qué funciona de esa forma.</p></div>
+<p>El sistema está pensado para ser transparente. Cada paso del pipeline se documentará de manera clara, y las decisiones técnicas se registrarán junto con las justificaciones de diseño. Esto permitirá que cualquier persona que lea la documentación entienda no solo cómo funciona MecaTutor, sino por qué funciona de esa forma.</p>
+<h2 id="seccion-3-detalles-tecnicos-del-trabajo-del-sistema">Sección 3: Detalles tecnicos del trabajo del sistema</h2>
+<h3 id="introduccion-general-al-pipeline">Introducción general al pipeline</h3>
+<p>El sistema MecaTutor se apoya en una arquitectura RAG (Retrieval-Augmented Generation), que une dos mundos: la búsqueda tradicional de información y la generación de lenguaje natural. En esta sección se explica cómo funciona esa unión desde dentro.  </p>
+<p>El objetivo de este apartado es mostrar el flujo técnico completo, desde la lectura de los documentos hasta la generación de respuestas, pero sin centrarnos todavía en optimizaciones ni interfaces gráficas. Lo que buscamos aquí es dejar claro cómo se articula todo el proceso.</p>
+<p>La idea es que cualquier persona que lea esta documentación pueda replicar el sistema, entender sus pasos, modificarlo y ampliarlo sin depender del creador original. Es decir, este documento busca dejar las bases técnicas y conceptuales que sostienen el funcionamiento del sistema.</p>
+<h3 id="estructura-del-proyecto">Estructura del proyecto</h3>
+<p>La organización de los archivos es crucial para mantener el orden y permitir la colaboración. Se recomienda la siguiente estructura FHS:</p>
+<pre><code>tab mecatutor/
+    core/
+    │   extractor.py
+    │   chunker.py
+    │   embeddings.py
+    │   indexer.py
+    │   retriever.py
+    │   generator.py
+    data/
+    │   pdfs/
+    │   processed/
+    │   manifests/
+    │   vectors/
+    scripts/
+    │   build_index.py
+    │   query_system.py
+    requirements.txt
+    config.yaml
+    README.md
+</code></pre>
+<p>Esta organización refleja el flujo completo del sistema. En <code>core/</code> están los módulos lógicos del pipeline. En <code>data/</code> se almacenan los documentos, los resultados procesados y los vectores generados. En <code>scripts/</code> se guardan los puntos de entrada ejecutables. El archivo <code>config.yaml</code> define las variables de entorno, como rutas o tamaños de chunk.</p>
+<p>De esta forma, MecaTutor se puede desplegar en cualquier entorno sin depender de configuraciones ocultas o rutas absolutas.</p>
+<hr />
+<h3 id="etapa-1-extraccion-de-datos">Etapa 1: extracción de datos</h3>
+<p>El proceso comienza con la lectura de los archivos PDF.<br />
+En esta etapa se usa una librería que permita extraer texto plano, como <code>PyPDF2</code>, <code>pdfminer.six</code> o <code>pymupdf</code>.</p>
+<p>El propósito no es analizar todavía, sino <strong>convertir cada documento en texto limpio</strong>. Ese texto se guarda en un formato estándar dentro de la carpeta <code>data/processed/</code>.</p>
+<p>He aqui un ejemplo de la posible implementacion:</p>
+<p>```python
+import fitz  # PyMuPDF
+import os</p>
+<p>def extract_text_from_pdfs(input_folder, output_folder):
+    for file in os.listdir(input_folder):
+        if file.endswith(".pdf"):
+            pdf_path = os.path.join(input_folder, file)
+            output_path = os.path.join(output_folder, file.replace(".pdf", ".txt"))</p>
+<pre><code>        with fitz.open(pdf_path) as doc:
+            text = ""
+            for page in doc:
+                text += page.get_text()
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(text)
+</code></pre>
+<p>if <strong>name</strong> == "<strong>main</strong>":
+    extract_text_from_pdfs("data/pdfs", "data/processed")</p></div>
             </div>
         </div>
 
@@ -215,5 +272,5 @@
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-06 20:08:34.373658+00:00
+Build Date UTC : 2025-11-06 20:38:22.495023+00:00
 -->
