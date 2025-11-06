@@ -169,28 +169,29 @@
 <p>De esta forma, MecaTutor se puede desplegar en cualquier entorno sin depender de configuraciones ocultas o rutas absolutas.</p>
 <hr />
 <h3 id="etapa-1-extraccion-de-datos">Etapa 1: extracción de datos</h3>
-<p>El proceso comienza con la lectura de los archivos PDF.<br />
-En esta etapa se usa una librería que permita extraer texto plano, como <code>PyPDF2</code>, <code>pdfminer.six</code> o <code>pymupdf</code>.</p>
-<p>El propósito no es analizar todavía, sino <strong>convertir cada documento en texto limpio</strong>. Ese texto se guarda en un formato estándar dentro de la carpeta <code>data/processed/</code>.</p>
+<p>El proceso comienza con la lectura de los archivos PDF. En esta etapa se usa una librería que permita extraer texto plano, como <code>PyPDF2</code>, <code>pdfminer.six</code> o <code>pymupdf</code>.</p>
+<p>El propósito no es analizar todavía, sino convertir cada documento en texto limpio. Ese texto se guarda en un formato estándar dentro de la carpeta <code>data/processed/</code>.</p>
 <p>He aqui un ejemplo de la posible implementacion:</p>
-<p>```python
-import fitz  # PyMuPDF
-import os</p>
-<p>def extract_text_from_pdfs(input_folder, output_folder):
-    for file in os.listdir(input_folder):
-        if file.endswith(".pdf"):
-            pdf_path = os.path.join(input_folder, file)
-            output_path = os.path.join(output_folder, file.replace(".pdf", ".txt"))</p>
-<pre><code>        with fitz.open(pdf_path) as doc:
-            text = ""
-            for page in doc:
-                text += page.get_text()
+<pre><code class="language-python">import fitz  # PyMuPDF
+import os
 
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(text)
-</code></pre>
-<p>if <strong>name</strong> == "<strong>main</strong>":
-    extract_text_from_pdfs("data/pdfs", "data/processed")</p></div>
+def extract_text_from_pdfs(input_folder, output_folder):
+    for file in os.listdir(input_folder):
+        if file.endswith(&quot;.pdf&quot;):
+            pdf_path = os.path.join(input_folder, file)
+            output_path = os.path.join(output_folder, file.replace(&quot;.pdf&quot;, &quot;.txt&quot;))
+
+            with fitz.open(pdf_path) as doc:
+                text = &quot;&quot;
+                for page in doc:
+                    text += page.get_text()
+
+            with open(output_path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+                f.write(text)
+
+if __name__ == &quot;__main__&quot;:
+    extract_text_from_pdfs(&quot;data/pdfs&quot;, &quot;data/processed&quot;)
+</code></pre></div>
             </div>
         </div>
 
@@ -272,5 +273,5 @@ import os</p>
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-06 20:38:22.495023+00:00
+Build Date UTC : 2025-11-06 20:39:54.979770+00:00
 -->
