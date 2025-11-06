@@ -59,7 +59,7 @@
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#seccion-2-detalles-del-flujo-de-trabajo" class="nav-link">Sección 2: Detalles del flujo de trabajo</a>
+            <li class="nav-item" data-bs-level="2"><a href="#seccion-2-detalles-del-flujo-de-trabajo-del-sistema" class="nav-link">Sección 2: Detalles del flujo de trabajo del sistema</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -88,24 +88,53 @@
 <h3 id="objetivos-y-alcances">Objetivos y alcances</h3>
 <p>El objetivo principal de MecaTutor es construir un desarrollo de un prototipo funcional capaz de responder preguntas sobre temas automotrices y de mecatrónica. El LLM debe ser capaz de extraer la información necesaria, procesarla y ofrecer respuestas claras, sin depender de conexión a modelos comerciales externos.</p>
 <p>El alcance del proyecto se limita a una interfaz de línea de comandos (CLI) en su primera fase. En su segunda fase, se puede integrar una interfaz grafica (GUI).</p>
-<hr />
-<h2 id="seccion-2-detalles-del-flujo-de-trabajo">Sección 2:  Detalles del flujo de trabajo</h2>
-<h3 id="mapeo-general-de-mecatutor">Mapeo general de MecaTutor</h3>
-<p>Esta sección va a explicar en su mayor detalle el funcionamiento del pipeline de MecaTutor desde un conjunto de PDFs hasta que un usuario recibe una respuesta. Esta sección comprende cada componente y explica que decisiones se toman y que salidas va a producir. Esta pensada para que cualquier ingeniero que se centre en el proyecto pueda entender el flujo completo y replicarlo si es necesario con las herramientas deseadas</p>
-<p>El flujo se resume en las siguientes etapas:
-- Paso 1: Ingesta 
-- Paso 2: Extracto de información y limpieza
-- Paso 3: Segmentado de datos (por chunks)
-- Paso 4: Indexado por vectores
-- Paso 5: Consultas (RAG) 
-- Paso 6: Post-procesado de datos </p>
-<p>Se necesita mencionar como es que cada una de estas etapas trabajan;</p>
-<h3 id="ingesta">Ingesta</h3>
-<h3 id="extracto-de-informacion-y-limpieza">Extracto de información y limpieza</h3>
-<h3 id="segmentado-de-datos">Segmentado de datos</h3>
-<h3 id="indexado-por-vectores">Indexado por vectores</h3>
-<h3 id="consultas-rag">Consultas (RAG)</h3>
-<h3 id="post-procesado-de-datos">Post-procesado de datos</h3></div>
+<h2 id="seccion-2-detalles-del-flujo-de-trabajo-del-sistema">Sección 2:  Detalles del flujo de trabajo del sistema</h2>
+<h3 id="vision-general-del-flujo-de-trabajo">Visión general del flujo de trabajo</h3>
+<p>El núcleo de MecaTutor se basa en una estructura modular. Cada parte del sistema tiene una responsabilidad clara y definida, y juntas forman un flujo de trabajo continuo. La meta es que el proceso sea comprensible, transparente y fácil de mantener.</p>
+<p>El recorrido de la información comienza con los documentos PDF. Estos archivos son la fuente del conocimiento. A partir de ahí, se aplican varias etapas que transforman el texto técnico en datos que el modelo puede usar. El flujo general del sistema sigue esta secuencia:</p>
+<ol>
+<li>Lectura y extracción del contenido de los PDFs.  </li>
+<li>División del texto en fragmentos o “chunks”.  </li>
+<li>Generación de representaciones numéricas o embeddings.  </li>
+<li>Creación de un índice vectorial que almacena esos embeddings.  </li>
+<li>Recuperación de fragmentos relevantes cuando el usuario formula una pregunta.  </li>
+<li>Construcción de una respuesta final con ayuda del modelo de lenguaje.</li>
+</ol>
+<p>Este flujo define la base del sistema. Cada etapa tiene su propio propósito y se conecta con la siguiente de forma directa. El objetivo es que, al final, todo el proceso sea reproducible y comprensible sin necesidad de depender de software cerrado o poco documentado.</p>
+<h3 id="extraccion-de-texto-desde-los-documentos">Extracción de texto desde los documentos</h3>
+<p>El primer paso es obtener el contenido real de los PDFs. Aunque parecen archivos simples, los documentos PDF pueden variar mucho: algunos tienen texto accesible, otros solo contienen imágenes escaneadas o fórmulas incrustadas. Por eso, el proceso de extracción tiene que ser flexible y robusto.</p>
+<p>El sistema leerá cada PDF y extraerá todo el texto seleccionable. Si el documento tiene imágenes o diagramas, estos se omitirán por ahora, ya que el objetivo principal es construir una base textual sólida. En etapas futuras se podría incluir un módulo de análisis de imágenes técnicas, pero no es prioridad en esta fase.</p>
+<p>Una vez que se tiene el texto, se limpia y se estandariza. Esto implica eliminar saltos de línea innecesarios, caracteres no reconocidos o espacios redundantes. La idea no es alterar el contenido, sino hacerlo más legible y coherente para los pasos siguientes.</p>
+<p>Cada documento procesado se registra en una pequeña base de datos interna o archivo de control. Este registro servirá para rastrear qué archivos han sido indexados y cuándo, de modo que el sistema sea capaz de actualizarse sin repetir trabajo.</p>
+<h3 id="division-en-fragmentos-o-chunks">División en fragmentos o chunks</h3>
+<p>Los modelos de lenguaje no pueden manejar textos muy largos de una sola vez. Por eso, el texto de cada PDF se divide en unidades más pequeñas llamadas “chunks”. Un chunk puede ser un párrafo, una sección corta o una página, dependiendo del contenido y del tamaño del texto.</p>
+<p>Cada fragmento debe tener sentido por sí mismo. No se trata de cortar el texto arbitrariamente, sino de conservar una estructura que mantenga el contexto técnico. Si se corta mal, el modelo podría perder significado y responder de manera confusa.</p>
+<p>La elección del tamaño de los chunks es un equilibrio. Si son demasiado cortos, el sistema pierde contexto; si son demasiado largos, los embeddings se vuelven ineficientes y difíciles de buscar. Encontrar ese punto medio es una parte esencial del diseño del sistema.</p>
+<h3 id="generacion-de-embeddings-o-representaciones-numericas">Generación de embeddings o representaciones numéricas</h3>
+<p>Una vez que se tienen los fragmentos, el siguiente paso es transformar el texto en una forma que una máquina pueda entender. Aquí entra en juego el concepto de embedding.</p>
+<p>Un embedding es una representación numérica del texto. Cada palabra o fragmento se convierte en un vector, una lista de números que refleja su significado en relación con otros textos. En este espacio numérico, dos fragmentos que hablen de lo mismo estarán más cerca entre sí, aunque usen palabras distintas.</p>
+<p>Por ejemplo, los fragmentos “motor de combustión interna” y “sistema de encendido del motor” tendrán vectores cercanos, porque ambos pertenecen al mismo campo semántico. En cambio, un fragmento sobre “electrónica de potencia” estará más alejado del vectpr principal.</p>
+<p>Para crear estos embeddings se usa un modelo preentrenado, que ya entiende las relaciones entre palabras. El sistema no necesita entrenar ese modelo desde cero, solo aplicarlo a cada fragmento. El resultado final son miles de vectores que describen todo el conocimiento contenido en los PDFs.</p>
+<h3 id="construccion-del-indice-vectorial">Construcción del índice vectorial</h3>
+<p>Todos los embeddings se almacenan en un índice vectorial. Este índice es una base de datos especializada que permite buscar rápidamente los fragmentos más parecidos a una consulta.</p>
+<p>A diferencia de una base de datos tradicional, donde se buscan palabras exactas, en un índice vectorial se buscan similitudes en significado. Esto significa que si un usuario pregunta “cómo medir la presión de un motor”, el sistema puede recuperar fragmentos que hablen de “manómetros”, “sistemas de medición” o “presión de aceite”, aunque esas palabras no aparezcan literalmente en la pregunta.</p>
+<p>El índice vectorial es el corazón del sistema de búsqueda. Sin él, el modelo no tendría una forma eficiente de encontrar el conocimiento relevante dentro de miles de páginas. Este índice se puede almacenar localmente y actualizar de forma incremental cuando se agregan nuevos documentos.</p>
+<h3 id="recuperacion-y-generacion-de-respuestas">Recuperación y generación de respuestas</h3>
+<p>Cuando el usuario hace una pregunta, el sistema repite un proceso similar al de los documentos. Convierte la pregunta en un vector usando el mismo modelo de embeddings y busca en el índice los fragmentos más cercanos en significado. Estos fragmentos se toman como contexto y se entregan al modelo de lenguaje, que los usa para generar una respuesta coherente.</p>
+<p>La respuesta final no sale de la nada. Se construye con base en la información real de los documentos. De esta manera, el sistema no inventa datos ni asume cosas fuera del alcance de su base. Esta es la principal ventaja de un sistema RAG: sus respuestas siempre pueden rastrearse hasta una fuente concreta.</p>
+<h3 id="componentes-del-sistema">Componentes del sistema</h3>
+<p>La arquitectura completa de MecaTutor puede dividirse en tres grandes componentes:</p>
+<ol>
+<li>Módulo de datos: se encarga de almacenar, procesar y mantener los PDFs y sus fragmentos. Aquí se incluyen los registros de control y la gestión de actualizaciones.</li>
+<li>Módulo de núcleo (core): contiene la lógica principal del sistema: extracción, vectorización, indexación y búsqueda. Es donde se ejecutan los procesos fundamentales del pipeline.</li>
+<li>Módulo de interfaz: es la capa donde el usuario interactúa con el sistema. En esta fase será una interfaz en línea de comandos (CLI), pero más adelante podría evolucionar hacia una interfaz web.</li>
+</ol>
+<p>Cada módulo puede funcionar de manera independiente, pero están conectados entre sí para formar un sistema coherente. Esta separación también facilita el mantenimiento, la depuración y la expansión del proyecto en el futuro.</p>
+<h3 id="consideraciones-tecnicas-y-limitaciones">Consideraciones técnicas y limitaciones</h3>
+<p>El proyecto está diseñado para ejecutarse en un entorno local usando CPU, ya que las máquinas disponibles no cuentan con GPU de alto rendimiento. Esto implica que los procesos de generación de embeddings y búsqueda pueden tardar más, pero sigue siendo viable gracias a la optimización de los modelos y al manejo cuidadoso de los recursos.</p>
+<p>Los 58 PDFs iniciales representan un conjunto amplio, pero manejable. Aun así, el sistema deberá procesarlos de forma incremental, para evitar sobrecargas.</p>
+<p>Otra limitación importante es el contenido visual de los documentos. Los gráficos, diagramas y esquemas no se procesarán en esta versión, ya que requerirían técnicas adicionales de visión por computadora. Por ahora, el enfoque se mantiene en el texto.</p>
+<p>El sistema está pensado para ser transparente. Cada paso del pipeline se documentará de manera clara, y las decisiones técnicas se registrarán junto con las justificaciones de diseño. Esto permitirá que cualquier persona que lea la documentación entienda no solo cómo funciona MecaTutor, sino por qué funciona de esa forma.</p></div>
             </div>
         </div>
 
@@ -187,5 +216,5 @@
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-10-22 00:08:36.436633+00:00
+Build Date UTC : 2025-11-06 20:05:09.648487+00:00
 -->
