@@ -167,7 +167,6 @@
 </code></pre>
 <p>Esta organización refleja el flujo completo del sistema. En <code>core/</code> están los módulos lógicos del pipeline. En <code>data/</code> se almacenan los documentos, los resultados procesados y los vectores generados. En <code>scripts/</code> se guardan los puntos de entrada ejecutables. El archivo <code>config.yaml</code> define las variables de entorno, como rutas o tamaños de chunk.</p>
 <p>De esta forma, MecaTutor se puede desplegar en cualquier entorno sin depender de configuraciones ocultas o rutas absolutas.</p>
-<hr />
 <h3 id="etapa-1-extraccion-de-datos">Etapa 1: extracción de datos</h3>
 <p>El proceso comienza con la lectura de los archivos PDF. En esta etapa se usa una librería que permita extraer texto plano, como <code>PyPDF2</code>, <code>pdfminer.six</code> o <code>pymupdf</code>.</p>
 <p>El propósito no es analizar todavía, sino convertir cada documento en texto limpio. Ese texto se guarda en un formato estándar dentro de la carpeta <code>data/processed/</code>.</p>
@@ -361,5 +360,5 @@ def build_faiss_index(vectors_folder, output_path):
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-10 20:24:33.991154+00:00
+Build Date UTC : 2025-11-10 20:43:01.448650+00:00
 -->
