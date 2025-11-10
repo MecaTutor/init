@@ -213,14 +213,39 @@ Por eso, cada archivo .txt se divide en secciones o “chunks”. La idea es man
     return chunks
 
 </code></pre>
-<p>Aquí cada fragmento tiene unas 500 palabras, lo suficiente para mantener contexto sin saturar memoria. Luego, cada chunk se guarda junto con su origen dentro de un archivo JSON o CSV. Si colocamos un ejemplo de salida, podria ser lo siguiente:</p>
+<p>Aquí cada fragmento tiene unas 500 palabras, lo suficiente para mantener contexto sin saturar memoria. Luego, cada chunk se guarda junto con su origen dentro de un archivo JSON o CSV. Si se coloca un ejemplo de salida, podria ser lo siguiente:</p>
 <pre><code class="language-json">{
     &quot;source&quot;: &quot;manual_turbinas.pdf&quot;,
     &quot;chunk_id&quot;: 12,
     &quot;text&quot;: &quot;El ciclo de combustión interna implica la compresión de aire y combustible...&quot;,
     &quot;start_page&quot;: 45
 }
-</code></pre></div>
+</code></pre>
+<h3 id="etapa-3-generado-de-embeddings">Etapa 3: generado de embeddings</h3>
+<p>En este punto entra la parte matemática del proceso. El texto de cada chunk se transforma en un vector numérico.
+A su vez, este mismo vector es una lista de valores que representan el significado del texto. Cada valor no significa nada por sí mismo, pero el conjunto forma una huella semántica única.</p>
+<p>En esta etapa se usa un modelo preentrenado de embeddings, como los que ofrecen SentenceTransformers. He aqui un ejemplo: </p>
+<pre><code class="language-python">from sentence_transformers import SentenceTransformer
+import json, os
+
+model = SentenceTransformer(&quot;all-MiniLM-L6-v2&quot;)
+
+def create_embeddings(chunks_folder, output_folder):
+    for file in os.listdir(chunks_folder):
+        if file.endswith(&quot;.json&quot;):
+            with open(os.path.join(chunks_folder, file), &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+                data = json.load(f)
+
+            for entry in data:
+                embedding = model.encode(entry[&quot;text&quot;])
+                entry[&quot;embedding&quot;] = embedding.tolist()
+
+            with open(os.path.join(output_folder, file), &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+
+</code></pre>
+<p>Computacionalmente, este proceso es el más intensivo. Cada fragmento produce un vector, y con miles de fragmentos, se genera una base de conocimiento densa.
+Pero una vez creados, los embeddings no cambian, a menos que se actualice el documento fuente.</p></div>
             </div>
         </div>
 
@@ -302,5 +327,5 @@ Por eso, cada archivo .txt se divide en secciones o “chunks”. La idea es man
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-10 19:31:10.846903+00:00
+Build Date UTC : 2025-11-10 19:48:08.974150+00:00
 -->
