@@ -191,6 +191,35 @@ def extract_text_from_pdfs(input_folder, output_folder):
 
 if __name__ == &quot;__main__&quot;:
     extract_text_from_pdfs(&quot;data/pdfs&quot;, &quot;data/processed&quot;)
+</code></pre>
+<h3 id="etapa-2-segmentacion-de-datos-chunking">Etapa 2: segmentación de datos (chunking)</h3>
+<p>Los modelos de lenguaje manejan mejor el texto cuando está dividido en fragmentos razonables.
+Por eso, cada archivo .txt se divide en secciones o “chunks”. La idea es mantener la coherencia de cada trozo, evitando cortar frases o ideas.</p>
+<p>He aqui otra implementacion</p>
+<pre><code class="language-python">def chunk_text(text, max_length=500):
+    words = text.split()
+    chunks = []
+    current_chunk = []
+
+    for word in words:
+        current_chunk.append(word)
+        if len(current_chunk) &gt;= max_length:
+            chunks.append(&quot; &quot;.join(current_chunk))
+            current_chunk = []
+
+    if current_chunk:
+        chunks.append(&quot; &quot;.join(current_chunk))
+
+    return chunks
+
+</code></pre>
+<p>Aquí cada fragmento tiene unas 500 palabras, lo suficiente para mantener contexto sin saturar memoria. Luego, cada chunk se guarda junto con su origen dentro de un archivo JSON o CSV. Si colocamos un ejemplo de salida, podria ser lo siguiente:</p>
+<pre><code class="language-json">{
+    &quot;source&quot;: &quot;manual_turbinas.pdf&quot;,
+    &quot;chunk_id&quot;: 12,
+    &quot;text&quot;: &quot;El ciclo de combustión interna implica la compresión de aire y combustible...&quot;,
+    &quot;start_page&quot;: 45
+}
 </code></pre></div>
             </div>
         </div>
@@ -273,5 +302,5 @@ if __name__ == &quot;__main__&quot;:
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-06 20:39:54.979770+00:00
+Build Date UTC : 2025-11-10 19:31:10.846903+00:00
 -->
