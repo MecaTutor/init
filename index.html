@@ -245,7 +245,41 @@ def create_embeddings(chunks_folder, output_folder):
 
 </code></pre>
 <p>Computacionalmente, este proceso es el más intensivo. Cada fragmento produce un vector, y con miles de fragmentos, se genera una base de conocimiento densa.
-Pero una vez creados, los embeddings no cambian, a menos que se actualice el documento fuente.</p></div>
+Pero una vez creados, los embeddings no cambian, a menos que se actualice el documento fuente.</p>
+<h3 id="etapa-4-construccion-del-indice-vectorial">Etapa 4: construcción del índice vectorial</h3>
+<p>Una vez que todos los embeddings están listos, se organiza una base que permita buscarlos por similitud.
+Aquí entra una herramienta como FAISS (de Facebook AI, dado que el LLM es LLama), que pueden realizar búsquedas vectoriales rápidas incluso en CPU.</p>
+<p>Cada vector se guarda junto a su referencia (nombre del documento, número de chunk y ruta original). Esto va a permitir reconstruir la fuente exacta de una respuesta en resultados posteriores.</p>
+<p>He aqui un ejemplo con FAISS creando un indice</p>
+<pre><code class="language-python">import faiss
+import numpy as np
+import json, os
+
+def build_faiss_index(vectors_folder, output_path):
+    all_vectors = []
+    metadata = []
+
+    for file in os.listdir(vectors_folder):
+        if file.endswith(&quot;.json&quot;):
+            with open(os.path.join(vectors_folder, file), &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+                data = json.load(f)
+                for entry in data:
+                    all_vectors.append(entry[&quot;embedding&quot;])
+                    metadata.append({
+                        &quot;source&quot;: entry[&quot;source&quot;],
+                        &quot;chunk_id&quot;: entry[&quot;chunk_id&quot;]
+                    })
+
+    vectors_np = np.array(all_vectors).astype(&quot;float32&quot;)
+    index = faiss.IndexFlatL2(vectors_np.shape[1])
+    index.add(vectors_np)
+    faiss.write_index(index, output_path)
+
+    with open(output_path.replace(&quot;.index&quot;, &quot;_meta.json&quot;), &quot;w&quot;) as f:
+        json.dump(metadata, f)
+
+
+</code></pre></div>
             </div>
         </div>
 
@@ -327,5 +361,5 @@ Pero una vez creados, los embeddings no cambian, a menos que se actualice el doc
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-10 19:48:08.974150+00:00
+Build Date UTC : 2025-11-10 20:19:40.251754+00:00
 -->
