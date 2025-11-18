@@ -67,6 +67,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#seccion-4-glosario-principal" class="nav-link">Sección 4: Glosario principal</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -245,11 +249,11 @@ def create_embeddings(chunks_folder, output_folder):
 </code></pre>
 <p>Computacionalmente, este proceso es el más intensivo. Cada fragmento produce un vector, y con miles de fragmentos, se genera una base de conocimiento densa.
 Pero una vez creados, los embeddings no cambian, a menos que se actualice el documento fuente.</p>
-<h3 id="etapa-4-construccion-del-indice-vectorial">Etapa 4: construcción del índice vectorial</h3>
+<h3 id="etapa-4-construccion-del-indice-vectorial">Etapa 4: Construcción del índice vectorial</h3>
 <p>Una vez que todos los embeddings están listos, se organiza una base que permita buscarlos por similitud.
 Aquí entra una herramienta como FAISS (de Facebook AI, dado que el LLM es LLama), que pueden realizar búsquedas vectoriales rápidas incluso en CPU.</p>
 <p>Cada vector se guarda junto a su referencia (nombre del documento, número de chunk y ruta original). Esto va a permitir reconstruir la fuente exacta de una respuesta en resultados posteriores.</p>
-<p>He aqui un ejemplo con FAISS creando un indice</p>
+<p>He aqui un ejemplo con FAISS creando un indice vectorial directo:</p>
 <pre><code class="language-python">import faiss
 import numpy as np
 import json, os
@@ -278,7 +282,166 @@ def build_faiss_index(vectors_folder, output_path):
         json.dump(metadata, f)
 
 
-</code></pre></div>
+</code></pre>
+<h3 id="etapa-5-recuperacion-de-fragmentos-relevantes">Etapa 5: Recuperación de fragmentos relevantes</h3>
+<p>Cuando un usuario formula una pregunta, el sistema debe encontrar los fragmentos más relacionados.
+El flujo sigue siendo el mismo, se genera un embedding para la pregunta, y se compara con los que ya existen en el índice.</p>
+<p>He aqui un ejemplo de esta comparacion directa: </p>
+<pre><code class="language-python">def retrieve_similar(query, index_path, model, metadata_path, top_k=5):
+    index = faiss.read_index(index_path)
+    with open(metadata_path, &quot;r&quot;) as f:
+        metadata = json.load(f)
+
+    query_vector = model.encode([query])
+    distances, indices = index.search(np.array(query_vector).astype(&quot;float32&quot;), top_k)
+
+    results = []
+    for i, idx in enumerate(indices[0]):
+        results.append(metadata[idx])
+
+    return results
+
+</code></pre>
+<p>El resultado es una lista de los fragmentos más cercanos en significado y no en palabras exactas. Esos fragmentos se pasan al LLM para generar la respuesta final.</p>
+<h3 id="etapa-6-generacion-final-con-el-modelo-llama-32">Etapa 6: Generación final con el modelo Llama 3.2</h3>
+<p>La última fase consiste en unir la información relevante y generar una respuesta coherente.. Aquí entra el modelo Llama 3.2, que recibe la pregunta y los fragmentos recuperados como contexto.</p>
+<p>Podemos representar una idea general de la siguiente forma:</p>
+<pre><code class="language-python">def generate_answer(context_chunks, question, model):
+    prompt = f&quot;Contexto:\n{context_chunks}\n\nPregunta:\n{question}\n\nRespuesta:&quot;
+    return model(prompt)
+
+
+</code></pre>
+<h3 id="control-de-calidad">Control de calidad</h3>
+<p>El sistema debe incluir verificaciones básicas:</p>
+<ol>
+<li>Comprobar que todos los PDFs se procesaron correctamente.</li>
+<li>Verificar que los archivos de texto no estén vacíos.</li>
+<li>Evaluar la consistencia del índice (mismo número de embeddings que de metadatos).</li>
+<li>Medir tiempos de ejecución y consumo de memoria.</li>
+</ol>
+<p>Con esto, se garantiza que los resultados del modelo tengan respaldo y que el sistema pueda crecer sin volverse inestable a largo plazo.</p>
+<h3 id="conclusiones-finales">Conclusiones finales</h3>
+<p>El pipeline RAG de MecaTutor no es un sistema cerrado. Es un entorno de experimentación.
+Cada paso está diseñado para poder cambiarse, ajustarse o sustituirse según las necesidades del proyecto o la disponibilidad de recursos.</p>
+<p>La fortaleza de este enfoque no está en la complejidad del código, sino en la claridad del proceso.
+Cualquier persona que lea esta documentación debe ser capaz de entender que los resultados no provienen de “magia”, sino de una cadena lógica de pasos conectados.</p>
+<p>El sistema no aprende por sí mismo, sino que organiza el conocimiento de forma que el modelo pueda razonarlo y explicarlo.
+Esa es la esencia de un buen diseño: claridad, coherencia y propósito.</p>
+<p>MecaTutor se convierte así en una plataforma donde el conocimiento técnico se organiza, se traduce y se vuelve útil.
+El propósito no es solo responder preguntas, sino construir una base sólida de entendimiento compartido.
+Este punto marca el corazón del proyecto: el momento en que los datos dejan de ser archivos y se convierten en inteligencia.</p>
+<h2 id="seccion-4-glosario-principal">Sección 4: Glosario principal</h2>
+<ul>
+<li>
+<p><strong>RAG (Retrieval Augmented Generation)</strong><br />
+  Es el metodo que combina búsqueda de información con generación de texto. El modelo busca la informacion, luego escribe.</p>
+</li>
+<li>
+<p><strong>Documento fuente</strong><br />
+  Son los archivos PDF originales desde los cuales se extrae el contenido. Todo el sistema va a girar alrededor de estos documentos.</p>
+</li>
+<li>
+<p><strong>Extracción de texto</strong><br />
+  Es el proceso de convertir un PDF en texto plano. </p>
+</li>
+<li>
+<p><strong>Chunking</strong><br />
+  Es la division del texto en fragmentos más pequeños y manejables. Permite que los modelos procesen información sin saturarse.</p>
+</li>
+<li>
+<p><strong>Chunk</strong><br />
+  Es cada fragmento del documento. Contiene unas pocas frases o párrafos y mantiene coherencia propia.</p>
+</li>
+<li>
+<p><strong>Embedding</strong><br />
+  Representación numérica de un texto. </p>
+</li>
+<li>
+<p><strong>Vector</strong><br />
+  Lista de números generada por un modelo. </p>
+</li>
+<li>
+<p><strong>Espacio vectorial</strong><br />
+  El espacio conceptual donde se representan todos los embeddings. </p>
+</li>
+<li>
+<p><strong>Índice vectorial</strong><br />
+  Archivo que contiene todos los embeddings organizados para buscar rápidamente los más similares a una consulta.</p>
+</li>
+<li>
+<p><strong>Búsqueda por similitud</strong><br />
+  Técnica que encuentra los vectores más cercanos a la pregunta del usuario. Permite identificar la información más relevante.</p>
+</li>
+<li>
+<p><strong>Retriever</strong><br />
+  Componente del sistema que se encarga de recuperar los mejores chunks según la consulta.</p>
+</li>
+<li>
+<p><strong>Contexto</strong><br />
+  Conjunto de fragmentos recuperados que se envían al modelo generador para que redacte la respuesta basándose en información real.</p>
+</li>
+<li>
+<p><strong>Generación</strong><br />
+  Fase en la que el modelo Llama formula la respuesta final usando el contexto suministrado.</p>
+</li>
+<li>
+<p><strong>Token</strong><br />
+  Unidad mínima de texto que usa un modelo de lenguaje (puede ser una palabra, parte de una palabra o un símbolo).</p>
+</li>
+<li>
+<p><strong>Modelo Llama</strong><br />
+  Modelo de lenguaje encargado de generar las respuestas finales. Recibe texto y produce texto.</p>
+</li>
+<li>
+<p><strong>Preprocesamiento</strong><br />
+  Limpieza y normalización del texto antes de crear los chunks o embeddings.</p>
+</li>
+<li>
+<p><strong>Metadatos</strong><br />
+  Información adicional sobre cada fragmento (nombre del archivo, número de chunk, página aproximada). Sirven para trazabilidad.</p>
+</li>
+<li>
+<p><strong>FAISS</strong><br />
+  Biblioteca especializada para realizar búsquedas vectoriales rápidas. Funciona en CPU sin problemas.</p>
+</li>
+<li>
+<p><strong>ChromaDB</strong><br />
+  Alternativa para manejar índices vectoriales con una interfaz más simple.</p>
+</li>
+<li>
+<p><strong>Pipeline</strong><br />
+  Secuencia de pasos que sigue el sistema: extracción → chunking → embeddings → índice → recuperación → generación.</p>
+</li>
+<li>
+<p><strong>Prompt</strong><br />
+  Texto que se le envía al modelo generador para guiar la respuesta. Incluye la pregunta y el contexto.</p>
+</li>
+<li>
+<p><strong>CPU</strong><br />
+  Procesador central que se usa para todas las tareas del sistema. No requiere GPU para funcionar.</p>
+</li>
+<li>
+<p><strong>Repositorio de datos</strong><br />
+  Carpeta donde se guardan PDFs, textos extraídos, chunks y vectores. Mantiene la historia y trazabilidad del proyecto.</p>
+</li>
+<li>
+<p><strong>Reproducibilidad</strong><br />
+  Capacidad de reconstruir el sistema desde cero usando los mismos pasos y datos. Es la base de una buena práctica científica.</p>
+</li>
+<li>
+<p><strong>Inferencia</strong><br />
+  Proceso de obtener una respuesta del modelo ya entrenado. No requiere volver a generar embeddings.</p>
+</li>
+<li>
+<p><strong>Embedding Model</strong><br />
+  Modelo que genera los vectores numéricos. Diferente al modelo generador.</p>
+</li>
+<li>
+<p><strong>Context Window</strong><br />
+  Cantidad de texto máxima que un modelo puede manejar en una sola llamada. Limita el tamaño del contexto enviado.</p>
+</li>
+</ul></div>
             </div>
         </div>
 
@@ -360,5 +523,5 @@ def build_faiss_index(vectors_folder, output_path):
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-11-10 20:43:01.448650+00:00
+Build Date UTC : 2025-11-18 22:07:47.318584+00:00
 -->
